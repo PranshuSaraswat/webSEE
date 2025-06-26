@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Order Return Checker</title>
+</head>
+<body>
+
+  <h2>Return Order Checker</h2>
+  <label>Enter order amount: </label>
+  <input type="number" id="orderAmount" placeholder="e.g. 250"><br>
+  <button onclick="checkOrder()">Check Return Eligibility</button>
+
+  <p id="result"></p>
+
+  <script>
+    function createReturnChecker(threshold) {
+      return function(amount) {
+        if (amount >= threshold) {
+          return `✅ You can return this order (₹${amount} ≥ ₹${threshold}).`;
+        } else {
+          return `❌ Cannot return: amount ₹${amount} is below return threshold ₹${threshold}.`;
+        }
+      };
+    }
+
+    const returnChecker = createReturnChecker(200);
+
+
+    function checkOrder() {
+      const amount = parseFloat(document.getElementById('orderAmount').value);
+      const result = returnChecker(amount);
+      document.getElementById('result').textContent = result;
+    }
+  </script>
+
+</body>
+</html>

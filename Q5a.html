@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    Enter Number:<input type="number" name="num">
+    Enter Noun:<input type="text" name="noun">
+    <button onclick="Pluralise()">Click</button>
+    <p id="result"></p>
+
+    <script>
+        function Pluralise(){
+            var no=parseInt(document.getElementsByName("num")[0].value);
+            var noun=document.getElementsByName("noun")[0].value;
+            var res=Pluralising(no,noun);
+            document.getElementById("result").innerHTML=res;
+        }
+        function Pluralising(number,noun){
+            if(number==1){
+                return number +" : "+ noun;
+            }
+            else if(noun=="geese"){
+                return number +" : goose";
+            }
+            else {
+                return number +" : " +noun+"s";
+            }
+        }
+    </script>
+</body>
+</html>

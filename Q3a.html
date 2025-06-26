@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Academic Data (Closure Example)</title>
+</head>
+<body>
+
+  <h2>Enter Student Details</h2>
+  <input type="text" id="usn" placeholder="USN"><br>
+  <input type="text" id="subjectCode" placeholder="Subject Code"><br>
+  <input type="text" id="subjectName" placeholder="Subject Name"><br>
+  <input type="number" id="cie" placeholder="CIE Marks"><br>
+  <input type="number" id="see" placeholder="SEE Marks"><br><br>
+  <button onclick="showStudentDetails()">Show Details</button>
+
+  <h3>Output:</h3>
+  <p id="output"></p>
+
+  <script>
+    // Closure function: cie and see are now private
+    function createMarksClosure(cie, see) {
+      // cie and see are now enclosed and will appear in the closure scope
+      return function() {
+        return cie + see;
+      };
+    }
+
+    function showStudentDetails() {
+      const usn = document.getElementById("usn").value;
+      const subjectCode = document.getElementById("subjectCode").value;
+      const subjectName = document.getElementById("subjectName").value;
+      const cie = parseInt(document.getElementById("cie").value);
+      const see = parseInt(document.getElementById("see").value);
+
+      if (!usn || !subjectCode || !subjectName || isNaN(cie) || isNaN(see)) {
+        document.getElementById("output").innerText = "Please fill all fields correctly.";
+        return;
+      }
+
+      const getTotalMarks = createMarksClosure(cie, see);
+
+      const total = getTotalMarks();
+
+      const outputText = `USN: ${usn}  
+Subject: ${subjectCode} - ${subjectName}  
+Total Marks: ${total}`;
+
+      document.getElementById("output").innerText = outputText;
+    }
+  </script>
+
+</body>
+</html>

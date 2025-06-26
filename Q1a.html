@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    Enter a string:<input type="text" name="stri" placeholder="enter"><br>
+    <button onclick="StringTxt()">translate</button>
+    <p id="result"></p>
+
+     <script >
+        function StringTxt() {
+            var str = document.getElementsByName("stri")[0].value.toLowerCase();
+            var result = "";
+            for(let i=0;i<str.length;i++){
+                if("aeiou".includes(str[i])){
+                    result+=str[i];
+                }else{
+                    result+=str[i]+"o"+str[i];
+                }
+            }
+            document.getElementById("result").innerHTML = result;
+        }
+    </script>
+</body>
+</html>
