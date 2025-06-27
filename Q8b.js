@@ -1,90 +1,117 @@
-
-// install node_modules (folder) + node_mongo_2024 (folder)
-// make sure mongodb is running in your system
-// gedit server.js (add given content)
-// mkdir views(folder)
-// cd views
-// gedit form.html (add the respective given code below) 
-// cd ..
-// node server.js
-// visit localhost:3000 (on any browser)
-
-sudo systemctl start mongod (to start mongodb)
-
---------------------------------------------------------
-// server.js
-
 const express = require('express');
 const { MongoClient } = require('mongodb');
 const path = require('path');
+
 const app = express();
 const uri = 'mongodb://127.0.0.1:27017';
+const dbName = 'productDB';
+const collectionName = 'products';
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Serve HTML form
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'form.html'));
+  res.sendFile(path.join(__dirname, 'form.html'));
 });
 
-app.get('/submit', async (req, res) => {
-  const { usn, name, company } = req.query;
+// POST: Insert product and calculate Final Price
+app.post('/add-product', async (req, res) => {
+  const { product_id, name, price, discount, stock } = req.body;
 
-  if (!usn || !name || !company) {
-    return res.send('All fields are required!');
+  const priceNum = parseFloat(price);
+  const discountNum = parseFloat(discount);
+  const stockNum = parseInt(stock);
+
+  if (!product_id || !name || isNaN(priceNum) || isNaN(discountNum) || isNaN(stockNum)) {
+    return res.send('Please fill all fields correctly.');
   }
 
-  let client;
+  const finalPrice = priceNum - (priceNum * discountNum / 100);
+
+  const client = new MongoClient(uri);
   try {
-    client = await MongoClient.connect(uri, { useUnifiedTopology: true });
-    const db = client.db('FinalYears');
-    const collection = db.collection('students');
+    await client.connect();
+    const collection = client.db(dbName).collection(collectionName);
 
-    await collection.insertOne({ usn, name, company });
+    await collection.insertOne({
+      product_id,
+      name,
+      price: priceNum,
+      discount: discountNum,
+      stock: stockNum,
+      final_price: finalPrice
+    });
 
-    res.send(`<p>Student record added.</p><a href="/">Go Back</a>`);
+    res.send(`Product added. Final Price: ₹${finalPrice}<br><a href="/">Back</a>`);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error storing data');
+    res.status(500).send('Error inserting product.');
   } finally {
-    if (client) await client.close();
+    await client.close();
   }
 });
 
-app.get('/infosys', async (req, res) => {
-  let client;
+// GET: Products with final_price < 21000
+app.get('/low-price-products', async (req, res) => {
+  const client = new MongoClient(uri);
   try {
-    client = await MongoClient.connect(uri, { useUnifiedTopology: true });
-    const db = client.db('FinalYears');
-    const collection = db.collection('students');
+    await client.connect();
+    const collection = client.db(dbName).collection(collectionName);
 
-    const infosysStudents = await collection.find({ company: /infosys/i }).toArray();
+    const products = await collection.find({ final_price: { $lt: 21000 } }).toArray();
 
-    let output = `<h2>Infosys Selected Students</h2><ul>`;
-    infosysStudents.forEach(s => {
-      output += `<li>${s.name} (${s.usn})</li>`;
+    if (products.length === 0) {
+      return res.send('No products found with Final Price < 21000. <a href="/">Back</a>');
+    }
+
+    let html = '<h2>Products with Final Price < ₹21000</h2><ul>';
+    products.forEach(p => {
+      html += `<li>${p.name} (ID: ${p.product_id}) - ₹${p.final_price.toFixed(2)} - Stock: ${p.stock}</li>`;
     });
-    output += '</ul><a href="/">Go Back</a>';
+    html += '</ul><a href="/">Back</a>';
 
-    res.send(output);
-  } catch (err) {} 
-  finally {
-    if (client) await client.close();
+    res.send(html);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error fetching products.');
+  } finally {
+    await client.close();
   }
 });
 
-app.listen(3000);
+app.listen(3000, () => {
+  console.log('Product Management App running at http://localhost:3000');
+});
 
 
-------------------------------------------------------
-// form.html
-
+<!DOCTYPE html>
 <html>
+<head>
+  <title>Product Entry</title>
+</head>
 <body>
-  <h2>Campus Selection Form</h2>
-  <form action="/submit" method="get">
-    USN: <input type="text" name="usn" required /><br /><br />
-    Name: <input type="text" name="name" required /><br /><br />
-    Company Name: <input type="text" name="company" required /><br /><br />
-    <input type="submit" value="Submit" />
+  <h2>Add Product</h2>
+  <form action="/add-product" method="POST">
+    <label>Product ID:</label><br>
+    <input type="text" name="product_id" required><br><br>
+
+    <label>Name:</label><br>
+    <input type="text" name="name" required><br><br>
+
+    <label>Price:</label><br>
+    <input type="number" step="0.01" name="price" required><br><br>
+
+    <label>Discount (%):</label><br>
+    <input type="number" step="0.01" name="discount" required><br><br>
+
+    <label>Stock:</label><br>
+    <input type="number" name="stock" required><br><br>
+
+    <button type="submit">Add Product</button>
   </form>
-  <a href="/infosys">View Infosys Selected Students</a>
+
+  <hr>
+  <a href="/low-price-products">View Products with Final Price < ₹21000</a>
 </body>
 </html>
