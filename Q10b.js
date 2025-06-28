@@ -51,7 +51,7 @@ app.post('/submit', async (req, res) => {
       funding_required: funding
     });
 
-    res.send('Startup idea submitted! <a href="/">Submit another</a> | <a href="/edtech">View EdTech ideas</a>');
+    res.send('Startup idea submitted!');
   } catch (err) {
     console.error(err);
     res.status(500).send('Error saving idea.');
@@ -82,6 +82,32 @@ app.get('/edtech', async (req, res) => {
     }
     html += '</ul><a href="/">Back</a>';
     res.send(html);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error fetching ideas.');
+  } finally {
+    await client.close();
+  }
+});
+
+//easier alternative
+app.get('/edtech', async (req, res) => {
+  const client = new MongoClient(uri);
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+
+    const results = await collection.find({
+      domain: "EdTech",
+      funding_required: { $gt: 75 }
+    }).toArray();
+
+    if (results.length === 0) {
+      return res.send('No EdTech ideas with funding > 75 lakhs found. <a href="/">Back</a>');
+    }
+
+    res.json(results);
   } catch (err) {
     console.error(err);
     res.status(500).send('Error fetching ideas.');
@@ -122,7 +148,11 @@ app.listen(3000, () => {
     <button type="submit">Submit Idea</button>
   </form>
 
-  <br>
-  <a href="/edtech">View EdTech Startups (Funding > 75L)</a>
+  <hr>
+
+  <h2>List of students Edtech idea</h2>
+  <form action="/edtech" method="Get">
+    <button type="submit">Searxh</button>
+  </form>
 </body>
 </html>
