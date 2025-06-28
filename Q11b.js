@@ -92,7 +92,28 @@ app.get('/not-eligible', async (req, res) => {
     await client.close();
   }
 });
+//alternate to the above one (easier)
+app.get('/not-eligible', async (req, res) => {
+  const client = new MongoClient(uri);
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
 
+    const notEligible = await collection.find({ attendancePercent: { $lt: 75 } }).toArray();
+
+    if (notEligible.length === 0) {
+      return res.send('All students are eligible. <a href="/">Go back</a>');
+    }
+
+    res.json(notEligible);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error fetching data.');
+  } finally {
+    await client.close();
+  }
+});
 app.listen(3000, () => {
   console.log('Server running at http://localhost:3000');
 });
@@ -120,6 +141,9 @@ app.listen(3000, () => {
 
     <button type="submit">Submit</button>
   </form>
-  <a href="/low-attendance">View Students Below 75% Attendance</a>
+  <h2>List of students Not eligible</h2>
+  <form action="/not-eligible" method="Get">
+    <button type="submit">Searxh</button>
+  </form>
 </body>
 </html>

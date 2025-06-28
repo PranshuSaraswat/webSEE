@@ -50,7 +50,7 @@ app.post('/submit', async (req, res) => {
       status  // ✅ save eligibility status
     });
 
-    res.send('Student details saved! <a href="/">Add more</a> | <a href="/not-eligible">View Not Eligible Students</a>');
+    res.send('Student details saved!');
   } catch (err) {
     console.error(err);
     res.status(500).send('Failed to save student.');
@@ -111,7 +111,9 @@ app.get('/not-eligible', async (req, res) => {
 });
 
 
-app.listen(3000);
+app.listen(3000, () => {
+  console.log('Server running at http://localhost:3000');
+});
 
 
 ----------------------------------------------
@@ -134,6 +136,9 @@ app.listen(3000);
 
     <button type="submit">Submit</button>
   </form>
-  <a href="/not-eligible">View Not Eligible Students (Marks < 20)</a>
+  <h2>List of students Not eligible</h2>
+  <form action="/not-eligible" method="Get">
+    <button type="submit">Searxh</button>
+  </form>
 </body>
 </html>
