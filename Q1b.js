@@ -88,17 +88,7 @@ app.get('/complaints/pending', async (req, res) => {
       return res.send('<p>No pending complaints found.</p><a href="/">Go Back</a>');
     }
 
-    let html = '<h2>Pending Complaints</h2><ul>';
-    for (const complaint of pending) {
-      html += `<li>
-        <strong>${complaint.user_name}</strong>: ${complaint.issue}<br>
-        Status: ${complaint.status}<br>
-        Complaint ID: ${complaint.complaint_id}
-      </li><br>`;
-    }
-    html += '</ul><a href="/">Go Back</a>';
-
-    res.send(html);
+    res.json(pending);
   } catch (err) {
     console.error(err);
     res.status(500).send('Error fetching pending complaints');

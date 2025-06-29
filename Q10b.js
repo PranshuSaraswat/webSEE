@@ -73,7 +73,7 @@ app.get('/edtech', async (req, res) => {
     }).toArray();
 
     if (results.length === 0) {
-      return res.send('No EdTech ideas with funding > 75 lakhs found. <a href="/">Back</a>');
+      return res.send('No EdTech ideas with funding > 75 lakhs found.');
     }
 
     let html = '<h2>EdTech Startups with Funding > 75 Lakhs</h2><ul>';

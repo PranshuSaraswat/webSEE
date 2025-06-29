@@ -136,6 +136,7 @@ app.listen(3000, () => {
 
     <button type="submit">Submit</button>
   </form>
+  <hr>
   <h2>List of students Not eligible</h2>
   <form action="/not-eligible" method="Get">
     <button type="submit">Searxh</button>

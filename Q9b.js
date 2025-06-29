@@ -34,7 +34,7 @@ app.post('/submit', async (req, res) => {
       semester: semesterNum
     });
 
-    res.send('Student record saved. <a href="/">Add More</a> | <a href="/filter">View CSE 6th Sem Students</a>');
+    res.send('Student record saved.');
   } catch (err) {
     console.error(err);
     res.status(500).send('Error saving data.');
@@ -50,22 +50,13 @@ app.get('/filter', async (req, res) => {
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
 
-    const result = await collection.find({
-      branch: 'CSE',
-      semester: 6
-    }).toArray();
+    const result = await collection.find({branch: 'CSE',semester: 6}).toArray();
 
     if (result.length === 0) {
-      return res.send('No CSE 6th semester students found. <a href="/">Back</a>');
+      return res.send('No CSE 6th semester students found.');
     }
 
-    let html = '<h2>CSE - 6th Semester Students</h2><ul>';
-    for (const student of result) {
-      html += `<li>${student.user_name} - Branch: ${student.branch}, Semester: ${student.semester}</li>`;
-    }
-    html += '</ul><a href="/">Back</a>';
-
-    res.send(html);
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).send('Error fetching data.');
@@ -100,6 +91,10 @@ app.listen(3000, () => {
     <button type="submit">Submit</button>
   </form>
   <br>
-  <a href="/filter">View CSE 6th Sem Students</a>
+  <hr>
+  <h2>List of students Edtech idea</h2>
+  <form action="/filter" method="Get">
+    <button type="submit">Searxh</button>
+  </form>
 </body>
 </html>

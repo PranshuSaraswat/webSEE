@@ -39,7 +39,7 @@ app.post('/submit', async (req, res) => {
     return res.send('Invalid input. Please enter valid attendance data.');
   }
 
-  const attendancePercent = ((attended / total) * 100).toFixed(2); // ✅ calculated
+  const attendancePercent = ((attended / total) * 100); // ✅ calculated
 
   const client = new MongoClient(uri);
   try {
@@ -75,7 +75,7 @@ app.get('/not-eligible', async (req, res) => {
     const notEligible = await collection.find({ attendancePercent: { $lt: 75 } }).toArray();
 
     if (notEligible.length === 0) {
-      return res.send('All students are eligible. <a href="/">Go back</a>');
+      return res.send('All students are eligible.');
     }
 
     let html = '<h2>Not Eligible Students (Attendance < 75%)</h2><ul>';
@@ -141,6 +141,7 @@ app.listen(3000, () => {
 
     <button type="submit">Submit</button>
   </form>
+  <hr>
   <h2>List of students Not eligible</h2>
   <form action="/not-eligible" method="Get">
     <button type="submit">Searxh</button>

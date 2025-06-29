@@ -65,13 +65,7 @@ app.get('/low-price-products', async (req, res) => {
       return res.send('No products found with Final Price < 21000. <a href="/">Back</a>');
     }
 
-    let html = '<h2>Products with Final Price < ₹21000</h2><ul>';
-    products.forEach(p => {
-      html += `<li>${p.name} (ID: ${p.product_id}) - ₹${p.final_price.toFixed(2)} - Stock: ${p.stock}</li>`;
-    });
-    html += '</ul><a href="/">Back</a>';
-
-    res.send(html);
+    res.json(products);
   } catch (err) {
     console.error(err);
     res.status(500).send('Error fetching products.');
@@ -112,6 +106,9 @@ app.listen(3000, () => {
   </form>
 
   <hr>
-  <a href="/low-price-products">View Products with Final Price < ₹21000</a>
+  <h2>List of low price products</h2>
+  <form action="/low-price-products" method="Get">
+    <button type="submit">Searxh</button>
+  </form>
 </body>
 </html>
