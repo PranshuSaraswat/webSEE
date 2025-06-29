@@ -1,12 +1,4 @@
 
-// install node_modules (folder) + node_mongo_2024 (folder)
-// make sure mongodb is running in your system
-// gedit server.js (add given content)
-// gedit form.html (add the respective given code below) 
-// node server.js
-// visit localhost:3000 (on any browser)
-
-sudo systemctl start mongod (to start mongodb)
 
 ----------------------------------------------
 // server.js
