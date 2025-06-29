@@ -1,38 +1,24 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Month Name Converter</title>
-</head>
-<body>
-
-  <h2>Enter Month Number (1–12):</h2>
-  <input type="text" id="monthInput" placeholder="e.g. 3 or 7.9">
+  <body>
+  Enter Month Number (1–12):
+  <input type="text" id="monthInput">
   <button onclick="showMonth()">Convert</button>
   <p id="output"></p>
 
-  <script>
-    function getMonthNameConverter(){
+   <script>
+    function showMonth() {
       const monthNames = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
       ];
-      return function(monthInput) {
-        if(isNaN(monthInput)|| monthInput<1||monthInput>12){
-            return "Bad Number";
-        }else{
-            return monthNames[monthInput-1]
-        }
-      };
-    };
-
-    const convertMonth = getMonthNameConverter();
-
-    function showMonth() {
       const input = parseInt(document.getElementById("monthInput").value);
-      const result = convertMonth(input);
-      document.getElementById("output").innerHTML = result;
+      if (isNaN(input) || input < 1 || input > 12) {
+        document.getElementById("output").innerText = "Bad Number";
+      } else {
+        document.getElementById("output").innerText = monthNames[input - 1];
+      }
     }
   </script>
-
-</body>
+  </body>
 </html>
